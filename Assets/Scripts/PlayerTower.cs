@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerTower : MonoBehaviour
 {
@@ -8,6 +9,8 @@ public class PlayerTower : MonoBehaviour
     [SerializeField] private Transform _distanceChecker;
     [SerializeField] private float _fixationMaxDistance;
     [SerializeField] private BoxCollider _checkCollider;
+
+    public UnityAction<int> HumanAdded;
 
     private List<Human> _humans;
 
@@ -17,6 +20,7 @@ public class PlayerTower : MonoBehaviour
         Vector3 spawnPoint = transform.position;
         _humans.Add(Instantiate(_startHuman, spawnPoint, Quaternion.identity, transform));
         _humans[0].Run();
+        HumanAdded?.Invoke(_humans.Count);
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -35,18 +39,22 @@ public class PlayerTower : MonoBehaviour
 
                     for (int i = collectedHumans.Count - 1; i >= 0; i--)
                     {
-
                         Human insertHuman = collectedHumans[i];
                         InsertHuman(insertHuman);
                         DisplaceChecker(insertHuman);
-
                     }
 
+                    HumanAdded?.Invoke(_humans.Count);
                     _humans[0].Run();
                 }
 
                collisionTower.BreakTower();
             }
+        }
+
+        if(collision.gameObject.TryGetComponent(out Wall Wall))
+        {
+            _humans.Remove(_humans[0]);
         }
     }
 
@@ -57,8 +65,6 @@ public class PlayerTower : MonoBehaviour
         collectedHuman.GetComponent<Rigidbody>().isKinematic = true;
         collectedHuman.GetComponent<BoxCollider>().enabled = false;
         _humans[0].Run();
-
-
     }
 
     private void SetHumanPosition(Human human)
@@ -75,6 +81,5 @@ public class PlayerTower : MonoBehaviour
         distanceCheckerNewPosition.y -= human.transform.localScale.y * displaceScale;
         _distanceChecker.position = distanceCheckerNewPosition;
         _checkCollider.center = _distanceChecker.localPosition;
-
     }
 }

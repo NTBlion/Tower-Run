@@ -5,8 +5,9 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Jumper : MonoBehaviour
 {
-    [SerializeField] float _jumpForce;
+    [SerializeField] private Boost _boost;
 
+    private float _jumpForce = 100;
     private bool _isGrounded;
     private Rigidbody _rigidbody;
 
@@ -30,5 +31,18 @@ public class Jumper : MonoBehaviour
         {
             _isGrounded = true;
         }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.TryGetComponent(out Boost boost))
+        {
+            _jumpForce *= _boost.JumpMultiplier;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        _jumpForce = 100;
     }
 }
