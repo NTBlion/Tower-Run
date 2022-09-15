@@ -62,10 +62,12 @@ public class Tower : MonoBehaviour
         for (int i = 0; i < _humanInTower.Count; i++)
         {
             _humanInTower[i].transform.parent = null;
-            _humanInTower[i].GetComponent<Rigidbody>().isKinematic = false;
-            _humanInTower[i].GetComponent<Rigidbody>().AddExplosionForce(500,transform.position,500);
-            _humanInTower[i].GetComponent<Rigidbody>().useGravity = true;
-
+            _humanInTower[i].gameObject.AddComponent<Rigidbody>();
+            Rigidbody rigidbody =_humanInTower[i].GetComponent<Rigidbody>();
+            rigidbody.isKinematic = false;
+            rigidbody.AddExplosionForce(500,transform.position,500);
+            rigidbody.useGravity = true;
+            _humanInTower[i].GetComponent<BoxCollider>().enabled = false;
         } 
     }
 }

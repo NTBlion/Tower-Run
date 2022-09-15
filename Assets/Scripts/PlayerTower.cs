@@ -54,7 +54,8 @@ public class PlayerTower : MonoBehaviour
 
         if(collision.gameObject.TryGetComponent(out Wall Wall))
         {
-            _humans.Remove(_humans[0]);
+           RemoveHumans(1);
+            _humans[0].Run();
         }
     }
 
@@ -62,8 +63,6 @@ public class PlayerTower : MonoBehaviour
     {
         _humans.Insert(0, collectedHuman);
         SetHumanPosition(collectedHuman);
-        collectedHuman.GetComponent<Rigidbody>().isKinematic = true;
-        collectedHuman.GetComponent<BoxCollider>().enabled = false;
         _humans[0].Run();
     }
 
@@ -81,5 +80,16 @@ public class PlayerTower : MonoBehaviour
         distanceCheckerNewPosition.y -= human.transform.localScale.y * displaceScale;
         _distanceChecker.position = distanceCheckerNewPosition;
         _checkCollider.center = _distanceChecker.localPosition;
+    }
+
+    private void RemoveHumans(int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            _humans[0].transform.parent = null;
+            _humans.Remove(_humans[0]);
+            _distanceChecker.position = _humans[0].transform.position;
+            _checkCollider.center = _distanceChecker.localPosition;
+        }
     }
 }

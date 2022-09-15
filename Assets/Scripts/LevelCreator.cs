@@ -12,10 +12,14 @@ public class LevelCreator : MonoBehaviour
     [Header("Wall")]
     [SerializeField] private Wall _wallTemplate;
     [SerializeField] private int _wallCount;
-    [SerializeField] private float _offset;
+
+    private List<Wall> _walls;
+
+    private Vector3 _offsetY = new Vector3(0, 0.5f, 0);
 
     private void Start()
     {
+        _walls = new List<Wall>();
         GenerateLevel();
     }
 
@@ -23,7 +27,7 @@ public class LevelCreator : MonoBehaviour
     {
         float roadLenght = _pathCreator.path.length;
         float distanceBetweenTower = roadLenght / _humanTowerCount;
-        float distanceBetweenWall = roadLenght / _wallCount + _offset;
+        float distanceBetweenWall = roadLenght / _wallCount;
 
         float distanceTravelled = 0;
         Vector3 spawnPoint;
@@ -43,7 +47,9 @@ public class LevelCreator : MonoBehaviour
             distanceTravelled += distanceBetweenWall;
             spawnPoint = _pathCreator.path.GetPointAtDistance(distanceTravelled, EndOfPathInstruction.Stop);
 
-            Instantiate(_wallTemplate, spawnPoint, Quaternion.identity);
+            _walls.Add(Instantiate(_wallTemplate, spawnPoint + _offsetY, Quaternion.identity));
         }
+
+        _walls[_walls.Count - 1].gameObject.SetActive(false);
     }
 }
