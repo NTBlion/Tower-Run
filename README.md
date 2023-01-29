@@ -1,2 +1,2 @@
 # Tower-Run
-Учебный проект
+Training project
